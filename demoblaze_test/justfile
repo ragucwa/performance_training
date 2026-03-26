@@ -1,0 +1,29 @@
+set shell := ["powershell", "-NoProfile", "-Command"]
+
+host := "https://api.demoblaze.com"
+users := "1"
+rate := "1"
+duration := "2m"
+locust := "python -m locust"
+
+# Run headless test (default: 1 user, 2 minutes)
+test:
+    New-Item -ItemType Directory -Force -Path results | Out-Null
+    {{locust}} -f locustfile.py --host={{host}} --users {{users}} --spawn-rate {{rate}} --run-time {{duration}} --headless --csv results/test_results --html results/report.html
+
+# Run with custom params: just run 5 2 5m
+run USERS RATE DURATION:
+    New-Item -ItemType Directory -Force -Path results | Out-Null
+    {{locust}} -f locustfile.py --host={{host}} --users {{USERS}} --spawn-rate {{RATE}} --run-time {{DURATION}} --headless --csv results/test_results --html results/report.html
+
+# Run with web UI at localhost:8089
+ui:
+    {{locust}} -f locustfile.py --host={{host}}
+
+# Quick 20s smoke test
+smoke:
+    {{locust}} -f locustfile.py --host={{host}} --users 1 --spawn-rate 1 --run-time 20s --headless --csv results/smoke --html results/smoke.html
+
+# Clean results
+clean:
+    Remove-Item results/* -Force -ErrorAction SilentlyContinue
