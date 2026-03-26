@@ -12,6 +12,8 @@ class APIClient:
                 items = r.json().get("Items", [])
                 if not items:
                     r.failure("No products returned")
+            elif r.status_code != 200:
+                r.failure(f"GET /entries returned {r.status_code}")
         return r
 
     def login(self, username, password):
@@ -28,6 +30,8 @@ class APIClient:
                     self.token = r.text.split(":")[1].strip().strip('"')
                 elif "Wrong" in r.text:
                     r.failure("Login failed: wrong credentials")
+            else:
+                r.failure(f"POST /login returned {r.status_code}")
         return r
 
     def get_by_category(self, category):
@@ -41,6 +45,8 @@ class APIClient:
                 items = r.json().get("Items", [])
                 if not items:
                     r.failure(f"No products in category: {category}")
+            else:
+                r.failure(f"POST /bycat returned {r.status_code}")
         return r
 
     def view_product(self, prod_id):
@@ -49,6 +55,8 @@ class APIClient:
                 data = r.json()
                 if "id" not in data:
                     r.failure("Product data missing 'id'")
+            else:
+                r.failure(f"POST /view returned {r.status_code}")
         return r
 
     def add_to_cart(self, prod_id):
@@ -62,7 +70,9 @@ class APIClient:
             },
             catch_response=True,
         ) as r:
-            if r.status_code == 200 and "error" in r.text.lower():
+            if r.status_code != 200:
+                r.failure(f"POST /addtocart returned {r.status_code}")
+            elif "error" in r.text.lower():
                 r.failure("Failed to add product to cart")
         return r
 
@@ -74,13 +84,17 @@ class APIClient:
                 items = r.json().get("Items", [])
                 if not items:
                     r.failure("Cart is empty")
+            else:
+                r.failure(f"POST /viewcart returned {r.status_code}")
         return r
 
     def delete_cart(self):
         with self.client.post(
             "/deletecart", json={"cookie": self.token}, catch_response=True
         ) as r:
-            if r.status_code == 200 and "error" in r.text.lower():
+            if r.status_code != 200:
+                r.failure(f"POST /deletecart returned {r.status_code}")
+            elif "error" in r.text.lower():
                 r.failure("Failed to delete cart")
         return r
 

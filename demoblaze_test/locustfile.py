@@ -34,7 +34,7 @@ class DemoblazeUser(HttpUser):
     def shopping_flow(self):
         self.api.get_entries()
         think(1, 2)
-
+        
         self.api.login(self.user, self.pwd)
         think(1, 2)
 
