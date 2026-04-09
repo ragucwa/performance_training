@@ -73,12 +73,14 @@ class APIClient:
             if r.status_code != 200:
                 r.failure(f"POST /addtocart returned {r.status_code}")
             elif "error" in r.text.lower():
-                r.failure("Failed to add product to cart")
+                r.failure(f"addtocart failed: {r.text.strip()}")
         return r
 
     def view_cart(self):
         with self.client.post(
-            "/viewcart", json={"cookie": self.token, "flag": True}, catch_response=True
+            "/viewcart",
+            json={"cookie": self.token, "flag": True},
+            catch_response=True,
         ) as r:
             if r.status_code == 200:
                 items = r.json().get("Items", [])

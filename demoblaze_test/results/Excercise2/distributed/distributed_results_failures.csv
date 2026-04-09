@@ -1,0 +1,4 @@
+Method,Name,Error,Occurrences
+POST,/viewcart,CatchResponseError('Cart is empty'),12
+POST,/viewcart,CatchResponseError('POST /viewcart returned 500'),24
+POST,/addtocart,CatchResponseError('POST /addtocart returned 500'),31

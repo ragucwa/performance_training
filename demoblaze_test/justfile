@@ -22,7 +22,15 @@ ui:
 
 # Quick 20s smoke test
 smoke:
-    {{locust}} -f locustfile.py --host={{host}} --users 1 --spawn-rate 1 --run-time 20s --headless --csv results/smoke --html results/smoke.html
+    {{locust}} -f locustfile.py --host={{host}} --users 2 --spawn-rate 2 --run-time 20s --headless --csv results/smoke --html results/smoke.html
+
+# Run distributed: just distributed 5 2 5m
+distributed USERS RATE DURATION:
+    New-Item -ItemType Directory -Force -Path results | Out-Null
+    Start-Process -NoNewWindow -FilePath python -ArgumentList "-m locust -f locustfile.py --worker --master-host=localhost --host={{host}}"
+    Start-Process -NoNewWindow -FilePath python -ArgumentList "-m locust -f locustfile.py --worker --master-host=localhost --host={{host}}"
+    Start-Sleep -Seconds 2
+    {{locust}} -f locustfile.py --host={{host}} --master --expect-workers 2 --users {{USERS}} --spawn-rate {{RATE}} --run-time {{DURATION}} --headless --csv results/distributed_results --html results/distributed_report.html
 
 # Clean results
 clean:
