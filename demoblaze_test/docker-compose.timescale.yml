@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: cyberw/locust-timescale:6
+    container_name: demoblaze-timescale
+    environment:
+      POSTGRES_PASSWORD: password
+      TIMESCALEDB_TELEMETRY: off
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - timescale_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  grafana:
+    image: cyberw/locust-grafana:3
+    container_name: demoblaze-grafana
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_LOG_LEVEL: warn
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - timescale_grafana_data:/var/lib/grafana
+
+volumes:
+  timescale_postgres_data:
+  timescale_grafana_data:

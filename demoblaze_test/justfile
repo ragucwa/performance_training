@@ -4,7 +4,18 @@ host := "https://api.demoblaze.com"
 users := "1"
 rate := "1"
 duration := "2m"
-locust := "python -m locust"
+locust := "..\\.venv\\Scripts\\python.exe -m locust"
+compose_file := "docker-compose.timescale.yml"
+grafana_url := "http://localhost:3000"
+pg_host := "localhost"
+pg_port := "5432"
+pg_user := "postgres"
+pg_password := "password"
+
+dashboard_main := "10878"
+dashboard_requests := "14423"
+dashboard_testruns := "14422"
+dashboard_scatter := "15419"
 
 # Run headless test (default: 1 user, 2 minutes)
 test:
@@ -20,17 +31,36 @@ run USERS RATE DURATION:
 ui:
     {{locust}} -f locustfile.py --host={{host}}
 
+# Start TimescaleDB and Grafana locally with Docker
+monitor-up:
+    docker compose -f {{compose_file}} up -d
+
+# Stop the local monitoring stack
+monitor-down:
+    docker compose -f {{compose_file}} down
+
+# Stop the local monitoring stack and remove persisted data
+monitor-reset:
+    docker compose -f {{compose_file}} down -v
+
+# Configure Grafana datasource and import Locust dashboards
+monitor-init:
+    ./scripts/setup_grafana.ps1 -GrafanaUrl {{grafana_url}} -PgHost {{pg_host}} -PgPort {{pg_port}} -PgUser {{pg_user}} -PgPassword {{pg_password}} -DashboardIds {{dashboard_main}},{{dashboard_requests}},{{dashboard_testruns}},{{dashboard_scatter}}
+
+# Start monitoring and run Locust with TimescaleDB logging
+run-timescale USERS RATE DURATION:
+    New-Item -ItemType Directory -Force -Path results | Out-Null
+    docker compose -f {{compose_file}} up -d
+    just monitor-init
+    {{locust}} -f locustfile.py --host={{host}} --users {{USERS}} --spawn-rate {{RATE}} --run-time {{DURATION}} --headless --timescale --grafana-url {{grafana_url}} --pghost {{pg_host}} --pgport {{pg_port}} --pguser {{pg_user}} --pgpassword {{pg_password}} --csv results/test_results --html results/report.html
+
+# Run the default Locust test with TimescaleDB logging
+test-timescale:
+    just run-timescale {{users}} {{rate}} {{duration}}
+
 # Quick 20s smoke test
 smoke:
     {{locust}} -f locustfile.py --host={{host}} --users 2 --spawn-rate 2 --run-time 20s --headless --csv results/smoke --html results/smoke.html
-
-# Run distributed: just distributed 5 2 5m
-distributed USERS RATE DURATION:
-    New-Item -ItemType Directory -Force -Path results | Out-Null
-    Start-Process -NoNewWindow -FilePath python -ArgumentList "-m locust -f locustfile.py --worker --master-host=localhost --host={{host}}"
-    Start-Process -NoNewWindow -FilePath python -ArgumentList "-m locust -f locustfile.py --worker --master-host=localhost --host={{host}}"
-    Start-Sleep -Seconds 2
-    {{locust}} -f locustfile.py --host={{host}} --master --expect-workers 2 --users {{USERS}} --spawn-rate {{RATE}} --run-time {{DURATION}} --headless --csv results/distributed_results --html results/distributed_report.html
 
 # Clean results
 clean:
