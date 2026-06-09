@@ -1,0 +1,49 @@
+[2026-06-08 22:45:48,882] Monster/INFO/locust.main: Starting Locust 2.43.3
+[2026-06-08 22:45:48,889] Monster/INFO/locust.main: Run time limit set to 1200 seconds
+[2026-06-08 22:45:50,943] Monster/INFO/root: Follow test run here: http://localhost:3000&var-testplan=locustfile.py&from=1780951550943&to=now
+[2026-06-08 22:45:50,950] Monster/INFO/locust.runners: Ramping to 15 users at a rate of 0.05 per second
+[2026-06-08 22:45:55,643] Monster/WARNING/root: Exception in keyboard input poller: cannot access free variable 'url' where it is not associated with a value in enclosing scope
+[2026-06-08 22:50:31,058] Monster/INFO/locust.runners: All users spawned: {"GuestUser": 5, "RegisteredUser": 10} (15 total users)
+[2026-06-08 23:05:48,585] Monster/INFO/locust.main: --run-time limit reached, shutting down
+[2026-06-08 23:05:48,684] Monster/INFO/locust.main: writing html report to file: results/Excercise4/report.html
+[2026-06-08 23:05:48,687] Monster/INFO/locust.main: Shutting down (exit code 1)
+[2026-06-08 23:05:49,058] Monster/INFO/root: Report: http://localhost:3000&var-testplan=locustfile.py&from=1780951550943&to=1780952750049
+
+[2026-06-09 00:02:07,739] Monster/INFO/locust.main: Starting Locust 2.43.3
+[2026-06-09 00:02:07,748] Monster/INFO/locust.main: Run time limit set to 1200 seconds
+[2026-06-09 00:02:09,798] Monster/INFO/root: Follow test run here: http://localhost:3000&var-testplan=locustfile.py&from=1780956129798&to=now
+[2026-06-09 00:02:09,807] Monster/INFO/locust.runners: Ramping to 15 users at a rate of 0.05 per second
+[2026-06-09 00:06:49,924] Monster/INFO/locust.runners: All users spawned: {"GuestUser": 5, "RegisteredUser": 10} (15 total users)
+[2026-06-09 00:22:07,361] Monster/INFO/locust.main: --run-time limit reached, shutting down
+[2026-06-09 00:22:07,440] Monster/INFO/locust.main: writing html report to file: results/Excercise4/report.html
+[2026-06-09 00:22:07,443] Monster/INFO/locust.main: Shutting down (exit code 0)
+[2026-06-09 00:22:08,235] Monster/INFO/root: Report: http://localhost:3000&var-testplan=locustfile.py&from=1780956129798&to=1780957329227
+
+[2026-06-09 08:04:04,284] Monster/INFO/locust.main: Starting Locust 2.43.3
+[2026-06-09 08:04:04,340] Monster/INFO/locust.main: Run time limit set to 1200 seconds
+[2026-06-09 08:04:06,384] Monster/INFO/root: Follow test run here: http://localhost:3000&var-testplan=locustfile.py&from=1780985046384&to=now
+[2026-06-09 08:04:06,397] Monster/INFO/locust.runners: Ramping to 150 users at a rate of 0.05 per second
+[2026-06-09 08:24:02,974] Monster/INFO/locust.main: --run-time limit reached, shutting down
+[2026-06-09 08:24:03,180] Monster/INFO/locust.main: writing html report to file: results/Excercise4/report.html
+[2026-06-09 08:24:03,183] Monster/INFO/locust.main: Shutting down (exit code 1)
+[2026-06-09 08:24:03,746] Monster/INFO/root: Report: http://localhost:3000&var-testplan=locustfile.py&from=1780985046384&to=1780986244736
+
+[2026-06-09 08:33:19,330] Monster/INFO/locust.main: Starting Locust 2.43.3
+[2026-06-09 08:33:19,337] Monster/INFO/locust.main: Run time limit set to 1200 seconds
+[2026-06-09 08:33:21,400] Monster/INFO/root: Follow test run here: http://localhost:3000&var-testplan=locustfile.py&from=1780986801400&to=now
+[2026-06-09 08:33:21,407] Monster/INFO/locust.runners: Ramping to 150 users at a rate of 0.10 per second
+[2026-06-09 08:53:19,008] Monster/INFO/locust.main: --run-time limit reached, shutting down
+[2026-06-09 08:53:19,229] Monster/INFO/locust.main: writing html report to file: results/Excercise4/report.html
+[2026-06-09 08:53:19,233] Monster/INFO/locust.main: Shutting down (exit code 1)
+[2026-06-09 08:53:19,780] Monster/INFO/root: Report: http://localhost:3000&var-testplan=locustfile.py&from=1780986801400&to=1780988000769
+
+[2026-06-09 10:32:22,692] Monster/INFO/locust.main: Starting Locust 2.43.3
+[2026-06-09 10:32:22,700] Monster/INFO/locust.main: Run time limit set to 1200 seconds
+[2026-06-09 10:32:24,764] Monster/INFO/root: Follow test run here: http://localhost:3000&var-testplan=locustfile.py&from=1780993944764&to=now
+[2026-06-09 10:32:24,771] Monster/INFO/locust.runners: Ramping to 150 users at a rate of 0.20 per second
+[2026-06-09 10:44:50,614] Monster/INFO/locust.runners: All users spawned: {"GuestUser": 45, "RegisteredUser": 105} (150 total users)
+[2026-06-09 10:52:22,374] Monster/INFO/locust.main: --run-time limit reached, shutting down
+[2026-06-09 10:52:22,461] Monster/INFO/locust.main: writing html report to file: results/Excercise4/report.html
+[2026-06-09 10:52:22,463] Monster/INFO/locust.main: Shutting down (exit code 1)
+[2026-06-09 10:52:23,238] Monster/INFO/root: Report: http://localhost:3000&var-testplan=locustfile.py&from=1780993944764&to=1780995144226
+

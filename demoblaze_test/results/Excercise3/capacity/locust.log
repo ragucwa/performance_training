@@ -1,0 +1,5 @@
+[2026-06-08 22:38:37,171] Monster/INFO/locust.main: Starting Locust 2.43.3
+[2026-06-08 22:38:37,179] Monster/INFO/locust.main: Run time limit set to 1200 seconds
+[2026-06-08 22:38:39,228] Monster/INFO/root: Follow test run here: http://localhost:3000&var-testplan=locustfile.py&from=1780951119227&to=now
+[2026-06-08 22:38:39,235] Monster/INFO/locust.runners: Ramping to 15 users at a rate of 1.00 per second
+[2026-06-08 22:38:53,366] Monster/INFO/locust.runners: All users spawned: {"GuestUser": 5, "RegisteredUser": 10} (15 total users)

@@ -1,10 +1,23 @@
 import base64
+import uuid
 
 
 class APIClient:
     def __init__(self, client):
         self.client = client
-        self.token = None
+        self.auth_token = None
+        self.guest_cookie = f"user={self._guid()}"
+        self.username = None
+
+    @staticmethod
+    def _guid():
+        return str(uuid.uuid4())
+
+    def _cart_cookie(self):
+        return self.auth_token or self.guest_cookie
+
+    def _cart_flag(self):
+        return bool(self.auth_token)
 
     def get_entries(self):
         with self.client.get("/entries", catch_response=True) as r:
@@ -27,7 +40,8 @@ class APIClient:
         ) as r:
             if r.status_code == 200:
                 if "Auth_token" in r.text:
-                    self.token = r.text.split(":")[1].strip().strip('"')
+                    self.username = username
+                    self.auth_token = r.text.split(":")[1].strip().strip('"')
                 elif "Wrong" in r.text:
                     r.failure("Login failed: wrong credentials")
             else:
@@ -63,23 +77,25 @@ class APIClient:
         with self.client.post(
             "/addtocart",
             json={
-                "id": self.token,
-                "cookie": self.token,
+                "id": self._guid(),
+                "cookie": self._cart_cookie(),
                 "prod_id": prod_id,
-                "flag": True,
+                "flag": self._cart_flag(),
             },
             catch_response=True,
         ) as r:
             if r.status_code != 200:
                 r.failure(f"POST /addtocart returned {r.status_code}")
+                return False
             elif "error" in r.text.lower():
                 r.failure(f"addtocart failed: {r.text.strip()}")
-        return r
+                return False
+        return True
 
     def view_cart(self):
         with self.client.post(
             "/viewcart",
-            json={"cookie": self.token, "flag": True},
+            json={"cookie": self._cart_cookie(), "flag": self._cart_flag()},
             catch_response=True,
         ) as r:
             if r.status_code == 200:
@@ -92,7 +108,7 @@ class APIClient:
 
     def delete_cart(self):
         with self.client.post(
-            "/deletecart", json={"cookie": self.token}, catch_response=True
+            "/deletecart", json={"cookie": self._cart_cookie()}, catch_response=True
         ) as r:
             if r.status_code != 200:
                 r.failure(f"POST /deletecart returned {r.status_code}")

@@ -74,6 +74,31 @@ function Get-ErrorResponseBody {
     }
 }
 
+function Update-LocustPercentilePanel {
+    param($Panel)
+
+    if (-not $Panel) {
+        return
+    }
+
+    if ($Panel.title -eq "Transaction response times (99th pct)") {
+        $Panel.title = "Transaction response times (95th pct)"
+
+        foreach ($target in $Panel.targets) {
+            if ($target.rawSql -and $target.rawSql.Contains('percentile_cont(0.99)')) {
+                $target.rawSql = $target.rawSql.Replace('percentile_cont(0.99)', 'percentile_cont(0.95)')
+                $target.rawSql = $target.rawSql.Replace('"99 percentile"', '"95 percentile"')
+            }
+        }
+    }
+
+    if ($Panel.panels) {
+        foreach ($childPanel in $Panel.panels) {
+            Update-LocustPercentilePanel -Panel $childPanel
+        }
+    }
+}
+
 $existingDatasource = $null
 
 try {
@@ -98,6 +123,13 @@ if (-not $existingDatasource) {
 
 foreach ($dashboardId in $DashboardIds) {
     $dashboard = Invoke-RestMethod -Method Get -Uri "$GrafanaUrl/api/gnet/dashboards/$dashboardId" -Headers $headers
+
+    if ($dashboard.json.title -eq "Locust") {
+        foreach ($panel in $dashboard.json.panels) {
+            Update-LocustPercentilePanel -Panel $panel
+        }
+    }
+
     $payload = @{
         dashboard = $dashboard.json
         overwrite = $true

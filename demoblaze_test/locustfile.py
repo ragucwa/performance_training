@@ -24,8 +24,19 @@ CATEGORY_WEIGHTS = [("phone", 50), ("notebook", 30), ("monitor", 20)]
 ADD_TO_CART_CHANCE = 0.4
 
 
-def think(min_s=1, max_s=3):
-    time.sleep(random.uniform(min_s, max_s))
+THINK_TIME_PROFILES = {
+    "landing": (2.6, 1.35, 1.8, 6.5),
+    "listing": (1.9, 3.45, 1.0, 6.0),
+    "product": (2.4, 6.5, 1.2, 8.0),
+    "cart": (1.4, 5.3, 6.7, 4.0),
+    "checkout": (2.8, 10.45, 1.5, 7.5),
+}
+
+
+def think(profile):
+    mean, sigma, min_s, max_s = THINK_TIME_PROFILES[profile]
+    delay = random.lognormvariate(mean, sigma)
+    time.sleep(max(min_s, min(delay, max_s)))
 
 
 def pick_category():
@@ -45,16 +56,16 @@ class BaseDemoblazeUser(HttpUser):
     def browse_and_add(self):
         cat = pick_category()
         self.api.get_by_category(cat)
-        think(1, 2)
+        think("listing")
 
         prod = random.choice(PRODUCTS_BY_CAT[cat])
         self.api.view_product(prod)
-        think(1, 3)
+        think("product")
 
         if random.random() < ADD_TO_CART_CHANCE:
-            self.api.add_to_cart(prod)
-            self.cart_items += 1
-            think(1, 2)
+            if self.api.add_to_cart(prod):
+                self.cart_items += 1
+                think("cart")
 
 
 class GuestUser(BaseDemoblazeUser):
@@ -63,14 +74,14 @@ class GuestUser(BaseDemoblazeUser):
     @task
     def guest_flow(self):
         self.api.get_entries()
-        think(1, 2)
+        think("landing")
 
         for _ in range(random.randint(1, 3)):
             self.browse_and_add()
 
         if self.cart_items > 0:
             self.api.view_cart()
-            think(1, 2)
+            think("cart")
             self.api.delete_cart()
             self.cart_items = 0
 
@@ -86,13 +97,13 @@ class RegisteredUser(BaseDemoblazeUser):
     @task
     def registered_flow(self):
         self.api.get_entries()
-        think(1, 2)
+        think("landing")
 
         for _ in range(random.randint(1, 3)):
             self.browse_and_add()
 
         if self.cart_items > 0:
             self.api.view_cart()
-            think(1, 2)
+            think("checkout")
             self.api.checkout()
             self.cart_items = 0
